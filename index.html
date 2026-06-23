@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金門盛夏之旅 ｜ 3日微醺小旅行</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Nunito', 'Noto Sans TC', sans-serif;
+            background-color: #F8F9FA;
+            background-image: radial-gradient(#3B7AAE 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+        /* 隱藏滾動條但保持功能 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="pb-32 text-gray-800">
+
+    <!-- Top Header -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100 px-4 py-4 text-center rounded-b-3xl shadow-sm">
+        <span class="text-xs bg-[#3B7AAE]/10 text-[#3B7AAE] font-bold px-3 py-1 rounded-full tracking-widest uppercase">📍 Kinmen Trip</span>
+        <h1 class="text-xl font-bold mt-1 text-gray-800">金門跳島 • 微醺夏日戰紀</h1>
+        <p class="text-xs text-gray-400 mt-0.5">2026.06.27(六) - 06.29(一)</p>
+    </header>
+
+    <main class="max-w-md mx-auto px-4 mt-6 space-y-10">
+
+        <!-- ================= 💰 隨身拆帳帳本 (內嵌於頂部) ================= -->
+        <section id="ledger-section" class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 flex flex-col">
+            <div class="flex items-center space-x-2 border-b pb-3">
+                <span class="bg-[#3B7AAE]/10 p-2 rounded-xl text-[#3B7AAE]"><i class="fa-solid fa-wallet text-base"></i></span>
+                <div>
+                    <h3 class="text-sm font-bold text-gray-800">金門團體隨身帳本</h3>
+                    <p class="text-[11px] text-gray-400">成員：Lee, Lin, Song, Wu 共四人均分</p>
+                </div>
+            </div>
+
+            <!-- 輸入表單 -->
+            <div class="py-3 border-b space-y-3 text-xs">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 mb-1">消費項目</label>
+                        <input type="text" id="expense-purpose" placeholder="例：高粱嗆蟹" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#3B7AAE]">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 mb-1">消費金額 ($NT)</label>
+                        <input type="number" id="expense-amount" placeholder="例：1200" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#3B7AAE]">
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex-1">
+                        <label class="block text-[10px] font-bold text-gray-400 mb-1">誰負責墊錢？</label>
+                        <select id="expense-payer" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#3B7AAE] font-bold text-[#3B7AAE]">
+                            <option value="Lee">Lee</option>
+                            <option value="Lin">Lin</option>
+                            <option value="Song">Song</option>
+                            <option value="Wu">Wu</option>
+                        </select>
+                    </div>
+                    <div class="pt-4">
+                        <button onclick="addExpenseItem()" class="bg-[#3B7AAE] text-white font-bold px-4 py-2 rounded-xl text-xs hover:bg-[#2F628C] shadow-sm transition-colors h-full">
+                            <i class="fa-solid fa-plus mr-1"></i> 新增花費
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 明細與清算結果 -->
+            <div class="pt-3 space-y-4">
+                <div>
+                    <h4 class="text-[11px] font-bold text-gray-400 mb-2 tracking-wider">🧾 消費明細</h4>
+                    <div id="expense-list" class="space-y-1.5 max-h-40 overflow-y-auto no-scrollbar">
+                        <p class="text-xs text-gray-400 text-center py-4 bg-gray-50 rounded-xl">目前還沒有任何記帳資料唷！</p>
+                    </div>
+                </div>
+
+                <div class="bg-[#3B7AAE]/5 border border-[#3B7AAE]/10 rounded-2xl p-4">
+                    <div class="flex items-center justify-between mb-2 gap-2">
+                        <span class="text-[11px] font-bold text-[#3B7AAE]"><i class="fa-solid fa-chart-pie mr-1"></i> 最優分帳結果</span>
+                        <button onclick="copyToLineClipboard()" class="text-[10px] bg-[#06C755] text-white px-2 py-1 rounded-full font-bold flex items-center space-x-1 hover:bg-[#05b04b] shrink-0">
+                            <i class="fa-brands fa-line text-xs"></i> <span>複製 LINE 通知</span>
+                        </button>
+                    </div>
+                    <div id="settlement-results" class="text-xs text-gray-600 space-y-1 font-mono">
+                        填寫上方消費並點擊新增，系統會自動幫你精算唷！
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= DAY 1 ================= -->
+        <section id="day1" class="scroll-mt-20">
+            <div class="flex items-center space-x-2 mb-4">
+                <span class="bg-[#3B7AAE] text-white font-extrabold px-4 py-1 rounded-2xl shadow-sm text-sm">DAY 1</span>
+                <span class="text-sm font-bold text-gray-500">06/27 (六) 金城市區與戰地初探</span>
+            </div>
+
+            <div class="space-y-4">
+                <!-- 景點1 -->
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex gap-3 relative" id="item-1-1">
+                    <div class="flex flex-col items-center"><span class="bg-green-50 text-green-600 w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-plane-arrival"></i></span></div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between"><span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-md font-medium">交通</span><span class="text-xs text-gray-400 font-mono">09:30</span></div>
+                        <h4 class="font-bold text-base mt-1 target-title">金門尚義機場取車</h4>
+                        <div class="text-xs text-gray-600 mt-2 bg-gray-50 p-2 rounded-xl space-y-1">
+                            <p>💡 <b>拍照小技巧:</b> <span class="target-tips">和機場門口的巨型風獅爺公仔合照，開啟金門第一張打卡照！</span></p>
+                            <p>🚗 <b>停車資訊:</b> <span class="target-parking">租車行會直接在機場停車場交車。</span></p>
+                        </div>
+                    </div>
+                    <button onclick="openEditModal('item-1-1')" class="absolute top-3 right-3 text-gray-300 hover:text-[#3B7AAE] p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                </div>
+
+                <!-- 餐廳1 -->
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex gap-3 relative" id="item-1-2">
+                    <div class="flex flex-col items-center"><span class="bg-orange-50 text-orange-500 w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-utensils"></i></span></div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between"><span class="text-xs px-2 py-0.5 bg-orange-50 text-orange-600 rounded-md font-medium">美食</span><span class="text-xs text-gray-400 font-mono">11:30</span></div>
+                        <h4 class="font-bold text-base mt-1 target-title">喬安牧場 (總店)</h4>
+                        <div class="flex gap-1 mt-1"><span class="text-[10px] bg-red-50 text-red-500 px-1.5 py-0.5 rounded-md font-bold">#必吃牛肉麵</span></div>
+                        <div class="text-xs text-gray-600 mt-2 bg-gray-50 p-2 rounded-xl space-y-1">
+                            <p>💡 <b>拍照小技巧:</b> <span class="target-tips">熱高湯現沖鮮牛肉麵，一定要用錄影紀錄肉片變粉嫩的瞬間！</span></p>
+                            <p>🚗 <b>停車資訊:</b> <span class="target-parking">門口設有專屬汽機車停車格。</span></p>
+                        </div>
+                    </div>
+                    <button onclick="openEditModal('item-1-2')" class="absolute top-3 right-3 text-gray-300 hover:text-[#3B7AAE] p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                </div>
+
+                <!-- 景點2 -->
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex gap-3 relative" id="item-1-3">
+                    <div class="flex flex-col items-center"><span class="bg-green-50 text-green-600 w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-camera"></i></span></div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between"><span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-md font-medium">景點</span><span class="text-xs text-gray-400 font-mono">14:00</span></div>
+                        <h4 class="font-bold text-base mt-1 target-title">翟山坑道</h4>
+                        <div class="text-xs text-gray-600 mt-2 bg-gray-50 p-2 rounded-xl space-y-1">
+                            <p>💡 <b>拍照小技巧:</b> <span class="target-tips">坑道內部微弱光影打在水面上倒影極美，記得開啟手機夜景模式。</span></p>
+                            <p>🚗 <b>停車資訊:</b> <span class="target-parking">景區附設大型免費機車與汽車停車場。</span></p>
+                        </div>
+                    </div>
+                    <button onclick="openEditModal('item-1-3')" class="absolute top-3 right-3 text-gray-300 hover:text-[#3B7AAE] p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                </div>
+
+                <!-- 微醺行程1 -->
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex gap-3 relative" id="item-1-4">
+                    <div class="flex flex-col items-center"><span class="bg-purple-50 text-purple-600 w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-glass-cheers"></i></span></div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between"><span class="text-xs px-2 py-0.5 bg-purple-50 text-purple-600 rounded-md font-medium">夜生活</span><span class="text-xs text-gray-400 font-mono">20:00</span></div>
+                        <h4 class="font-bold text-base mt-1 target-title">後浦純幫吧 (高粱調酒)</h4>
+                        <div class="flex gap-1 mt-1"><span class="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded-md font-bold">#微醺限定</span></div>
+                        <div class="text-xs text-gray-600 mt-2 bg-gray-50 p-2 rounded-xl space-y-1">
+                            <p>💡 <b>拍照小技巧:</b> <span class="target-tips">拍高粱特調酒杯與吧台復古霓虹燈的合影，微醺氛圍感拉滿。</span></p>
+                            <p>🚗 <b>停車資訊:</b> <span class="target-parking">金城市區步行即可抵達，喝酒不開車！</span></p>
+                        </div>
+                    </div>
+                    <button onclick="openEditModal('item-1-4')" class="absolute top-3 right-3 text-gray-300 hover:text-[#3B7AAE] p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= DAY 2 ================= -->
+        <section id="day2" class="scroll-mt-20">
+            <div class="flex items-center space-x-2 mb-4">
+                <span class="bg-[#3B7AAE] text-white font-extrabold px-4 py-1 rounded-2xl shadow-sm text-sm">DAY 2</span>
+                <span class="text-sm font-bold text-gray-500">06/28 (日) 大金門閩南聚落與夕陽</span>
+            </div>
+
+            <div class="space-y-4">
+                <!-- 早餐 -->
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex gap-3 relative" id="item-2-1">
+                    <div class="flex flex-col items-center"><span class="bg-orange-50 text-orange-500 w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-utensils"></i></span></div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between"><span class="text-xs px-2 py-0.5 bg-orange-50 text-orange-600 rounded-md font-medium">早餐</span><span class="text-xs text-gray-400 font-mono">08:00</span></div>
+                        <h4 class="font-bold text-base mt-1 target-title">永春廣東粥</h4>
+                        <div class="text-xs text-gray-600 mt-2 bg-gray-50 p-2 rounded-xl space-y-1">
+                            <p>💡 <b>拍照小技巧:</b> <span class="target-tips">金門在地「無米粥」，油條沾粥的吃法是絕對要拍的經典。</span></p>
+                            <p>🚗 <b>停車資訊:</b> <span class="target-parking">周邊巷弄狹小，建議車輛停在北堤停車場再步行。</span></p>
+                        </div>
+                    </div>
+                    <button onclick="openEditModal('item-2-1')" class="absolute top-3 right-3 text-gray-300 hover:text-[#3B7AAE] p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                </div>
+
+                <!-- 景點 -->
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex gap-3 relative" id="item-2-2">
+                    <div class="flex flex-col items-center"><span class="bg-green-50 text-green-600 w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-camera"></i></span></div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between"><span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-md font-medium">景點</span><span class="text-xs text-gray-400 font-mono">10:30</span></div>
+                        <h4 class="font-bold text-base mt-1 target-title">山后民俗文化村</h4>
+                        <div class="text-xs text-gray-600 mt-2 bg-gray-50 p-2 rounded-xl space-y-1">
+                            <p>💡 <b>拍照小技巧:</b> <span class="target-tips">站在古厝整齊縱深防衛的巷弄中間，拍出閩南馬背與燕尾古建築的幾何美感。</span></p>
+                            <p>🚗 <b>停車資訊:</b> <span class="target-parking">文化村前方有大型免費停車場。</span></p>
+                        </div>
+                    </div>
+                    <button onclick="openEditModal('item-2-2')" class="absolute top-3 right-3 text-gray-300 hover:text-[#3B7AAE] p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                </div>
+
+                <!-- 夕陽景點 -->
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex gap-3 relative" id="item-2-3">
+                    <div class="flex flex-col items-center"><span class="bg-sky-50 text-sky-600 w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-cloud-sun"></i></span></div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between"><span class="text-xs px-2 py-0.5 bg-sky-50 text-sky-600 rounded-md font-medium">美景</span><span class="text-xs text-gray-400 font-mono">17:30</span></div>
+                        <h4 class="font-bold text-base mt-1 target-title">建功嶼 (金門版摩西分海)</h4>
+                        <div class="text-xs text-gray-600 mt-2 bg-gray-50 p-2 rounded-xl space-y-1">
+                            <p>💡 <b>拍照小技巧:</b> <span class="target-tips">退潮時站在石板路上，將巨大的「牡蠣人」雕塑和夕陽餘暉一起拍進去。</span></p>
+                            <p>🚗 <b>停車資訊:</b> <span class="target-parking">導航建功嶼路口，有寬敞的路邊停車空間。</span></p>
+                        </div>
+                    </div>
+                    <button onclick="openEditModal('item-2-3')" class="absolute top-3 right-3 text-gray-300 hover:text-[#3B7AAE] p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= DAY 3 ================= -->
+        <section id="day3" class="scroll-mt-20">
+            <div class="flex items-center space-x-2 mb-4">
+                <span class="bg-[#3B7AAE] text-white font-extrabold px-4 py-1 rounded-2xl shadow-sm text-sm">DAY 3</span>
+                <span class="text-sm font-bold text-gray-500">06/29 (一) 烈嶼小金門跳島冒險</span>
+            </div>
+
+            <div class="space-y-4">
+                <!-- 跨海 -->
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex gap-3 relative" id="item-3-1">
+                    <div class="flex flex-col items-center"><span class="bg-blue-50 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-bridge"></i></span></div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between"><span class="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md font-medium">跨海</span><span class="text-xs text-gray-400 font-mono">09:00</span></div>
+                        <h4 class="font-bold text-base mt-1 target-title">出發小金門 (經金門大橋)</h4>
+                        <div class="text-xs text-gray-600 mt-2 bg-gray-50 p-2 rounded-xl space-y-1">
+                            <p>💡 <b>拍照小技巧:</b> <span class="target-tips">行經大橋時，副駕駛可以錄下兩側無敵海景和宏偉的橋塔。</span></p>
+                            <p>🚗 <b>停車資訊:</b> <span class="target-parking">過橋免收費，依照正常速限行駛。</span></p>
+                        </div>
+                    </div>
+                    <button onclick="openEditModal('item-3-1')" class="absolute top-3 right-3 text-gray-300 hover:text-[#3B7AAE] p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                </div>
+
+                <!-- 小金門午餐 -->
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex gap-3 relative" id="item-3-2">
+                    <div class="flex flex-col items-center"><span class="bg-orange-50 text-orange-500 w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-utensils"></i></span></div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between"><span class="text-xs px-2 py-0.5 bg-orange-50 text-orange-600 rounded-md font-medium">美食</span><span class="text-xs text-gray-400 font-mono">12:00</span></div>
+                        <h4 class="font-bold text-base mt-1 target-title">黃厝三層樓芋頭餐</h4>
+                        <div class="text-xs text-gray-600 mt-2 bg-gray-50 p-2 rounded-xl space-y-1">
+                            <p>💡 <b>拍照小技巧:</b> <span class="target-tips">綿密的小金門芋頭冰與香濃芋頭丸，絕對要來張特寫。</span></p>
+                            <p>🚗 <b>停車資訊:</b> <span class="target-parking">餐廳旁有專屬空地可供免費停車。</span></p>
+                        </div>
+                    </div>
+                    <button onclick="openEditModal('item-3-2')" class="absolute top-3 right-3 text-gray-300 hover:text-[#3B7AAE] p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                </div>
+
+                <!-- 戰地坑道 -->
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex gap-3 relative" id="item-3-3">
+                    <div class="flex flex-col items-center"><span class="bg-green-50 text-green-600 w-8 h-8 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-shield-halved"></i></span></div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between"><span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-md font-medium">戰地</span><span class="text-xs text-gray-400 font-mono">14:30</span></div>
+                        <h4 class="font-bold text-base mt-1 target-title">沙溪堡 (國境最西端)</h4>
+                        <div class="text-xs text-gray-600 mt-2 bg-gray-50 p-2 rounded-xl space-y-1">
+                            <p>💡 <b>拍照小技巧:</b> <span class="target-tips">沿著有「小萬里長城」之稱的木棧道走向觀海涼亭，能拍出延綿入海的絕佳構圖。</span></p>
+                            <p>🚗 <b>停車資訊:</b> <span class="target-parking">營區外備有免費汽機車停放區。</span></p>
+                        </div>
+                    </div>
+                    <button onclick="openEditModal('item-3-3')" class="absolute top-3 right-3 text-gray-300 hover:text-[#3B7AAE] p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部導覽條 -->
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-lg px-6 py-3 rounded-full shadow-lg border border-gray-100 flex items-center space-x-8 z-40 max-w-sm w-[90%] justify-around">
+        <a href="#ledger-section" class="flex flex-col items-center text-[#3B7AAE] nav-link"><i class="fa-solid fa-wallet text-lg"></i><span class="text-[10px] font-bold">帳本</span></a>
+        <a href="#day1" class="flex flex-col items-center text-gray-400 nav-link"><i class="fa-solid fa-calendar-day text-lg"></i><span class="text-[10px] font-bold">D1</span></a>
+        <a href="#day2" class="flex flex-col items-center text-gray-400 nav-link"><i class="fa-solid fa-calendar-day text-lg"></i><span class="text-[10px] font-bold">D2</span></a>
+        <a href="#day3" class="flex flex-col items-center text-gray-400 nav-link"><i class="fa-solid fa-calendar-day text-lg"></i><span class="text-[10px] font-bold">D3</span></a>
+    </nav>
+
+    <!-- ================= 編輯行程 Modal ================= -->
+    <div id="editModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 px-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl transform scale-95 transition-transform duration-300 space-y-4">
+            <div class="flex items-center justify-between border-b pb-2">
+                <h3 class="text-md font-bold text-gray-800">✏️ 編輯行程資訊</h3>
+                <button onclick="closeEditModal()" class="text-gray-400"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <input type="hidden" id="edit-item-id">
+            <div class="space-y-3 text-sm">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">項目/景點名稱</label>
+                    <input type="text" id="edit-title" class="w-full bg-gray-50 border rounded-xl px-3 py-2">
+                </div>
+                <div id="tips-field">
+                    <label class="block text-xs font-bold text-gray-500 mb-1">💡 拍照技巧</label>
+                    <textarea id="edit-tips" rows="2" class="w-full bg-gray-50 border rounded-xl px-3 py-2"></textarea>
+                </div>
+                <div id="parking-field">
+                    <label class="block text-xs font-bold text-gray-500 mb-1">🚗 停車/交通資訊</label>
+                    <textarea id="edit-parking" rows="2" class="w-full bg-gray-50 border rounded-xl px-3 py-2"></textarea>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="closeEditModal()" class="flex-1 bg-gray-100 py-2 rounded-xl text-sm font-bold">取消</button>
+                <button onclick="saveScheduleChanges()" class="flex-1 bg-[#3B7AAE] text-white py-2 rounded-xl text-sm font-bold">儲存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 核心功能邏輯 -->
+    <script>
+        // 記憶體中的記帳資料庫
+        let expensesData = [];
+        const membersList = ['Lee', 'Lin', 'Song', 'Wu'];
+
+        // 新增一筆消費
+        function addExpenseItem() {
+            const purposeInput = document.getElementById('expense-purpose');
+            const amountInput = document.getElementById('expense-amount');
+            const payerSelect = document.getElementById('expense-payer');
+
+            const purpose = purposeInput.value.trim() || "未命名花費";
+            const amount = parseFloat(amountInput.value);
+            const payer = payerSelect.value;
+
+            if (isNaN(amount) || amount <= 0) {
+                alert('請輸入正確的消費金額！');
+                return;
+            }
+
+            // 寫入陣列
+            expensesData.push({
+                id: Date.now(),
+                purpose: purpose,
+                amount: amount,
+                payer: payer
+            });
+
+            // 欄位重置
+            purposeInput.value = '';
+            amountInput.value = '';
+            
+            // 重新渲染畫面與計算
+            renderExpenses();
+        }
+
+        // 刪除某一筆項目
+        function deleteExpenseItem(id) {
+            expensesData = expensesData.filter(item => item.id !== id);
+            renderExpenses();
+        }
+
+        // 核心：渲染與智慧分帳演算法
+        function renderExpenses() {
+            const listContainer = document.getElementById('expense-list');
+            const settlementContainer = document.getElementById('settlement-results');
+
+            if (expensesData.length === 0) {
+                listContainer.innerHTML = `<p class="text-xs text-gray-400 text-center py-4 bg-gray-50 rounded-xl">目前還沒有任何記帳資料唷！</p>`;
+                settlementContainer.innerHTML = `填寫上方消費並點擊新增，系統會自動幫你精算唷！`;
+                return;
+            }
+
+            // 1. 渲染明細列表
+            listContainer.innerHTML = '';
+            expensesData.forEach(item => {
+                const row = document.createElement('div');
+                row.className = "flex items-center justify-between bg-gray-50 px-3 py-2 rounded-xl text-xs";
+                row.innerHTML = `
+                    <div class="flex-1 min-w-0 pr-2">
+                        <span class="font-bold text-gray-700 block truncate">${item.purpose}</span>
+                        <span class="text-[10px] text-gray-400">由 <b class="text-[#3B7AAE]">${item.payer}</b> 墊付 / 每人 $${(item.amount / 4).toFixed(0)}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-bold font-mono text-gray-700">$${item.amount}</span>
+                        <button onclick="deleteExpenseItem(${item.id})" class="text-red-400 hover:text-red-600 p-1"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                `;
+                listContainer.appendChild(row);
+            });
+
+            // 2. 智慧分帳結算 (簡化債務網)
+            let balance = { Lee: 0, Lin: 0, Song: 0, Wu: 0 };
+            let totalAmount = 0;
+
+            expensesData.forEach(item => {
+                balance[item.payer] += item.amount;
+                totalAmount += item.amount;
+            });
+
+            const share = totalAmount / 4;
+            let netBalances = [];
+            for (let member in balance) {
+                netBalances.push({
+                    name: member,
+                    net: balance[member] - share
+                });
+            }
+
+            let creditors = netBalances.filter(m => m.net > 0.1).sort((a, b) => b.net - a.net);
+            let debtors = netBalances.filter(m => m.net < -0.1).sort((a, b) => a.net - b.net);
+
+            let transferLogs = [];
+
+            let cIdx = 0, dIdx = 0;
+            while (cIdx < creditors.length && dIdx < debtors.length) {
+                let creditor = creditors[cIdx];
+                let debtor = debtors[dIdx];
+
+                let amountToTransfer = Math.min(creditor.net, Math.abs(debtor.net));
+                
+                if (amountToTransfer > 0.5) {
+                    transferLogs.push({
+                        from: debtor.name,
+                        to: creditor.name,
+                        amount: Math.round(amountToTransfer)
+                    });
+                }
+
+                creditor.net -= amountToTransfer;
+                debtor.net += amountToTransfer;
+
+                if (Math.abs(creditor.net) < 0.1) cIdx++;
+                if (Math.abs(debtor.net) < 0.1) dIdx++;
+            }
+
+            settlementContainer.innerHTML = '';
+            if (transferLogs.length === 0) {
+                settlementContainer.innerHTML = `🎉 所有人金額剛好打平，不需相互轉帳！`;
+            } else {
+                transferLogs.forEach(log => {
+                    const p = document.createElement('p');
+                    p.className = "py-0.5 border-b border-gray-100 last:border-0";
+                    p.innerHTML = `💸 <b class="text-red-500">${log.from}</b> 轉帳給 <b class="text-green-600">${log.to}</b> ： <span class="font-bold text-gray-800">$${log.amount}</span>`;
+                    settlementContainer.appendChild(p);
+                });
+            }
+        }
+
+        // 產生並複製 LINE 群組格式
+        function copyToLineClipboard() {
+            if (expensesData.length === 0) {
+                alert('請先輸入至少一筆消費項目才能複製唷！');
+                return;
+            }
+
+            let total = 0;
+            let listText = "";
+            expensesData.forEach((item, index) => {
+                total += item.amount;
+                listText += `${index + 1}. ${item.purpose}: $${item.amount} (${item.payer}墊)\n`;
+            });
+
+            let balance = { Lee: 0, Lin: 0, Song: 0, Wu: 0 };
+            expensesData.forEach(item => balance[item.payer] += item.amount);
+            const share = total / 4;
+            let creditors = [], debtors = [];
+            for (let m in balance) {
+                let net = balance[m] - share;
+                if (net > 0.1) creditors.push({name: m, net: net});
+                if (net < -0.1) debtors.push({name: m, net: net});
+            }
+            creditors.sort((a, b) => b.net - a.net);
+            debtors.sort((a, b) => a.net - b.net);
+
+            let transferText = "";
+            let cIdx = 0, dIdx = 0;
+            while (cIdx < creditors.length && dIdx < debtors.length) {
+                let creditor = creditors[cIdx];
+                let debtor = debtors[dIdx];
+                let amount = Math.min(creditor.net, Math.abs(debtor.net));
+                if (amount > 0.5) {
+                    transferText += ` 💸 【${debtor.name}】 ➔ 給 【${creditor.name}】 $${Math.round(amount)}\n`;
+                }
+                creditor.net -= amount; debtor.net += amount;
+                if (Math.abs(creditor.net) < 0.1) cIdx++;
+                if (Math.abs(debtor.net) < 0.1) dIdx++;
+            }
+
+            const lineTemplate = `━━━━━━━━━━━━━━━\n⛰️ 金門小旅行 • 最終結算通知 ⛰️\n━━━━━━━━━━━━━━━\n💰 總花費金額：$${total} NTD\n👥 分帳人數：4 人 (Lee, Lin, Song, Wu)\n📊 每人應付：$${Math.round(total / 4)} NTD\n\n📝 消費明細回顧：\n${listText}\n📣 最終轉帳速查：\n${transferText || "✅ 大家剛好平分，不需再轉帳！"}\n感謝大家！辛苦囉～✈️`;
+
+            navigator.clipboard.writeText(lineTemplate).then(() => {
+                alert('🎉 已將 LINE 格式分帳通知複製到剪貼簿！快去群組貼上吧！');
+            }).catch(err => {
+                alert('複製失敗，請手動全選複製。');
+            });
+        }
+
+        // 行程編輯 Modal 控制邏輯
+        function openEditModal(itemId) {
+            const card = document.getElementById(itemId);
+            document.getElementById('edit-item-id').value = itemId;
+            document.getElementById('edit-title').value = card.querySelector('.target-title').innerText;
+
+            const tipsSpan = card.querySelector('.target-tips');
+            const parkingSpan = card.querySelector('.target-parking');
+
+            document.getElementById('tips-field').style.display = tipsSpan ? 'block' : 'none';
+            if(tipsSpan) document.getElementById('edit-tips').value = tipsSpan.innerText;
+
+            document.getElementById('parking-field').style.display = parkingSpan ? 'block' : 'none';
+            if(parkingSpan) document.getElementById('edit-parking').value = parkingSpan.innerText;
+
+            const modal = document.getElementById('editModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('div').classList.remove('scale-95');
+        }
+        function closeEditModal() {
+            const modal = document.getElementById('editModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.querySelector('div').classList.add('scale-95');
+        }
+        function saveScheduleChanges() {
+            const itemId = document.getElementById('edit-item-id').value;
+            const card = document.getElementById(itemId);
+            card.querySelector('.target-title').innerText = document.getElementById('edit-title').value;
+
+            const tipsSpan = card.querySelector('.target-tips');
+            const parkingSpan = card.querySelector('.target-parking');
+
+            if(tipsSpan) tipsSpan.innerText = document.getElementById('edit-tips').value;
+            if(parkingSpan) parkingSpan.innerText = document.getElementById('edit-parking').value;
+
+            closeEditModal();
+        }
+
+        // 平滑滾動與導覽列切換
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                document.querySelectorAll('nav a').forEach(a => a.classList.replace('text-[#3B7AAE]', 'text-gray-400'));
+                this.classList.replace('text-gray-400', 'text-[#3B7AAE]');
+            });
+        });
+    </script>
+</body>
+</html>
